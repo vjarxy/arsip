@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JIKN - Deskripsi Arsip</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+  
+    body {
+      background: #f5f5f5;
+      overflow-x: hidden;
+    }
+  
+    .nav-pill {
+      border-radius: 999px;
+    }
+  
+    .nav-menu {
+      position: relative;
+    }
+  
+    .nav-indicator {
+      position: absolute;
+      bottom: 10px;
+      height: 3px;
+      border-radius: 999px;
+      background: white;
+      transition: all 0.35s cubic-bezier(.4,0,.2,1);
+      left: 0;
+      width: 0;
+      opacity: 0;
+    }
+  
+    .nav-link {
+      position: relative;
+      transition: color .25s ease;
+    }
+  
+    .nav-link:hover {
+      color: #ffffff;
+    }
+  
+    .nav-link.active {
+      font-weight: 500;
+    }
+  
+    .lang-select:focus,
+    .search-input:focus,
+    .filter-select:focus {
+      outline: none;
+    }
+  
+    .dropdown-enter {
+      opacity: 0;
+      transform: translateY(8px) scale(.98);
+      pointer-events: none;
+    }
+  
+    .dropdown-open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+  
+    .dropdown-panel {
+      transition: all .22s ease;
+      transform-origin: top right;
+    }
+  
+    .desc-page-bg {
+      background: #dfe3ee;
+    }
+  
+    /* SIDEBAR ACCORDION */
+    .sidebar-wrapper {
+      background: #d7d7d7;
+      overflow: hidden;
+    }
+  
+    .sidebar-section + .sidebar-section {
+      border-top: 1px solid rgba(0,0,0,.06);
+    }
+  
+    .sidebar-trigger {
+      width: 100%;
+      height: 48px;
+      padding: 0 12px;
+      background: #cfcfcf;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 500;
+      color: #2f2f2f;
+    }
+  
+    .sidebar-trigger:hover {
+      background: #c7c7c7;
+    }
+  
+    .sidebar-chevron {
+      transition: transform .25s ease;
+    }
+  
+    .sidebar-section.active .sidebar-chevron {
+      transform: rotate(180deg);
+    }
+  
+    .sidebar-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .3s ease, padding .3s ease;
+      background: #fff;
+      padding: 0 12px;
+    }
+  
+    .sidebar-section.active .sidebar-content {
+      max-height: 500px;
+      padding: 10px 12px 12px;
+    }
+  
+    .sidebar-item {
+      color: #157cdc;
+      font-size: 12px;
+      line-height: 1.25rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+  
+    .sidebar-item:hover {
+      color: #082d63;
+    }
+  
+    .sidebar-row-between {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+  
+    .archive-card {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 220px;
+    overflow: visible;
+    margin-bottom: 14px;
+    background: transparent;
+    }
+
+    .archive-meta {
+    width: 340px;
+    min-width: 340px;
+    background: #0b1d63;
+    color: white;
+    padding: 22px 18px 18px 18px;
+    position: relative;
+    z-index: 2;
+    transition: transform .45s cubic-bezier(.4,0,.2,1), opacity .35s ease, width .45s cubic-bezier(.4,0,.2,1), min-width .45s cubic-bezier(.4,0,.2,1), padding .35s ease;
+    }
+
+    .archive-card.collapsed .archive-meta {
+    transform: translateX(-100%);
+    opacity: 0;
+    width: 0;
+    min-width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden;
+    }
+
+    .archive-image {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #d0d0d0;
+    transition: all .45s cubic-bezier(.4,0,.2,1);
+    }
+
+    .archive-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(100%);
+    }
+
+    .archive-toggle {
+    position: absolute;
+    left: 328px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #2f2f2f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,.14);
+    z-index: 5;
+    transition: left .45s cubic-bezier(.4,0,.2,1), transform .2s ease, background .2s ease;
+    }
+
+    .archive-toggle:hover {
+    background: #f5f5f5;
+    }
+
+    .archive-card.collapsed .archive-toggle {
+    left: 8px;
+    }
+
+    .archive-title {
+    font-size: 14px;
+    line-height: 1.35;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 18px;
+    max-width: 260px;
+    }
+
+    .meta-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #eef2ff;
+    font-size: 11px;
+    line-height: 1.35;
+    margin-top: 8px;
+    }
+
+    .meta-line svg {
+    flex-shrink: 0;
+    }
+
+    .meta-bottom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    }
+
+    .count-chip {
+    min-width: 26px;
+    height: 18px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.18);
+    color: #ffffff;
+    font-size: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .tag-chip {
+  height: 20px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #f3f3f3;
+  color: #2f3c63;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.tag-chip:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,.12);
+}
+  
+    .pagination-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(13, 33, 94, 0.08);
+  padding: 8px 10px;
+  border-radius: 999px;
+  box-shadow: 0 8px 18px rgba(11, 29, 99, 0.08);
+  backdrop-filter: blur(6px);
+}
+
+.pagination-btn,
+.pagination-page,
+.pagination-dots {
+  height: 34px;
+  min-width: 34px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all .25s ease;
+}
+
+.pagination-btn {
+  padding: 0 14px;
+  border: 1px solid #d4dbea;
+  background: #ffffff;
+  color: #243b7a;
+  gap: 6px;
+}
+
+.pagination-btn:hover {
+  background: #eef3ff;
+  border-color: #bfcdee;
+  transform: translateY(-1px);
+}
+
+.pagination-btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pagination-page {
+  border: 1px solid transparent;
+  background: transparent;
+  color: #4f5b75;
+}
+
+.pagination-page:hover {
+  background: #eef3ff;
+  color: #0d215e;
+}
+
+.pagination-page.active {
+  background: linear-gradient(135deg, #0d215e 0%, #163b88 100%);
+  color: white;
+  box-shadow: 0 6px 16px rgba(13, 33, 94, .22);
+}
+
+.pagination-dots {
+  color: #7a849a;
+  min-width: 24px;
+}
+
+.pagination-icon {
+  width: 14px;
+  height: 14px;
+}
+  </style>
+</head>
+<body class="text-[#1f1f1f]">
+
+  <div class="w-full min-h-screen bg-white">
+    <!-- TOP BAR -->
+    <header class="w-full bg-white border-b border-gray-200">
+      <div class="w-full px-6 xl:px-10 py-3">
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3 min-w-0">
+            <img
+              src="assets/logo.png"
+              alt="Logo JIKN"
+              class="w-12 h-12 object-contain shrink-0"
+            />
+            <div
+              id="siteTitle"
+              class="text-[20px] xl:text-[22px] font-semibold text-[#21407c] leading-tight"
+              data-id="siteTitle"
+            >
+              Jaringan Informasi Kearsipan Nasional
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 shrink-0">
+            <select
+              id="languageSwitcher"
+              class="lang-select text-[12px] border border-gray-300 rounded px-3 py-1.5 text-gray-600 bg-white"
+            >
+              <option value="id">Indonesia</option>
+              <option value="en">English</option>
+            </select>
+
+            <a
+              href="#"
+              id="aboutText"
+              class="text-[12px] text-gray-600 hover:text-gray-800"
+              data-id="about"
+            >
+              Tentang Kami
+            </a>
+
+            <div class="relative">
+              <button
+                id="userMenuButton"
+                type="button"
+                class="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.125a7.5 7.5 0 0115 0" />
+                </svg>
+              </button>
+
+              <div
+                id="userDropdown"
+                class="dropdown-panel dropdown-enter absolute right-0 top-12 w-44 bg-white border border-gray-200 rounded-xl shadow-lg p-2 z-50"
+              >
+                <a
+                  href="login.html"
+                  class="block px-4 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-100"
+                  id="loginMenuText"
+                  data-id="login"
+                >
+                  Login
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NAV -->
+        <div class="mt-3">
+          <nav class="bg-[#0d215e] nav-pill overflow-hidden px-3">
+            <div class="nav-menu">
+              <ul id="navList" class="flex items-center text-white text-[14px] relative">
+                <li>
+                  <a href="index.html" class="nav-link block px-8 py-4" data-id="navHome">Beranda</a>
+                </li>
+                <li>
+                  <a href="deskripsi.html" class="nav-link active block px-8 py-4" data-id="navDesc">Deskripsi Arsip</a>
+                </li>
+                <li>
+                  <a href="#" class="nav-link block px-8 py-4" data-id="navVirtual">Pameran Virtual</a>
+                </li>
+                <li>
+                  <a href="#" class="nav-link block px-8 py-4" data-id="navAccess">Layanan Akses</a>
+                </li>
+                <li>
+                  <a href="#" class="nav-link block px-8 py-4" data-id="navFaq">FAQ</a>
+                </li>
+              </ul>
+              <span id="navIndicator" class="nav-indicator"></span>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT ONLY -->
+    <section class="desc-page-bg min-h-[calc(100vh-108px)] px-8 xl:px-10 pt-5 pb-8">
+      <div class="max-w-[1320px] mx-auto">
+        <!-- breadcrumb -->
+        <div class="text-[10px] text-[#404a69] mb-4">
+          <span data-id="navHome">Beranda</span>
+          <span class="mx-1">&gt;</span>
+          <span data-id="navDesc">Deskripsi Arsip</span>
+        </div>
+
+        <div class="grid grid-cols-[260px_1fr] gap-6 items-start">
+          <!-- Sidebar -->
+          <aside class="w-full">
+            <div class="sidebar-wrapper">
+              <!-- Bahasa -->
+              <div class="sidebar-section active">
+                <button class="sidebar-trigger accordion-btn" type="button">
+                  <span data-id="filterLanguage">Bahasa</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="sidebar-chevron w-5 h-5 text-[#595959]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="m19 9-7 7-7-7"/>
+                  </svg>
+                </button>
+          
+                <div class="sidebar-content">
+                  <a href="#" class="sidebar-item" data-id="allLanguage">Semua Bahasa</a>
+          
+                  <div class="sidebar-row-between text-[12px] text-[#4e7eb9]">
+                    <a href="#" class="hover:text-[#2f5e9e]">Indonesia - Indonesia</a>
+                    <span class="text-[#3f3f3f]">938</span>
+                  </div>
+                </div>
+              </div>
+          
+              <!-- Pengelola Arsip -->
+              <div class="sidebar-section">
+                <button class="sidebar-trigger accordion-btn" type="button">
+                  <span data-id="archiveManager">Pengelola Arsip</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="sidebar-chevron w-5 h-5 text-[#595959]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="m19 9-7 7-7-7"/>
+                  </svg>
+                </button>
+          
+                <div class="sidebar-content">
+                  <a href="#" class="sidebar-item" data-id="allArchiveManager">Semua Pengelola Arsip</a>
+                  <a href="#" class="sidebar-item">Kementerian Sosial Republik Indonesia</a>
+                  <a href="#" class="sidebar-item">Badan Riset dan Inovasi Nasional</a>
+                  <a href="#" class="sidebar-item">Dinas Perpustakaan dan Kearsipan Kabupaten Garut</a>
+                  <a href="#" class="sidebar-item">Dinas Kearsipan dan Perpustakaan Kabupaten Bandung Barat</a>
+                </div>
+              </div>
+          
+              <!-- Pencipta Arsip -->
+              <div class="sidebar-section">
+                <button class="sidebar-trigger accordion-btn" type="button">
+                  <span data-id="archiveCreator">Pencipta Arsip</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="sidebar-chevron w-5 h-5 text-[#595959]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="m19 9-7 7-7-7"/>
+                  </svg>
+                </button>
+          
+                <div class="sidebar-content">
+                  <a href="#" class="sidebar-item" data-id="allArchiveCreator">Semua Pencipta Arsip</a>
+                  <a href="#" class="sidebar-item">Dinas Arsip dan Perpustakaan Kab. Purwakarta</a>
+                  <a href="#" class="sidebar-item">Biro Umum Sekretariat Daerah Provinsi Riau</a>
+                  <a href="#" class="sidebar-item">KANTOR WILAYAH DEPARTEMEN PENERANGAN</a>
+                  <a href="#" class="sidebar-item">Badan Keamanan Laut Republik Indonesia</a>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Right content -->
+          <div class="w-full">
+            <!-- top filter -->
+            <div class="flex items-center gap-3 mb-4">
+              <div class="relative w-[510px]">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#9aa3b4]">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0 1 14 0z"/>
+                  </svg>
+                </span>
+                <input
+                  id="searchInput"
+                  type="text"
+                  class="search-input w-full h-[40px] bg-[#f7f7f7] border border-[#d6d6d6] pl-10 pr-4 text-[12px] text-[#4a4a4a]"
+                  placeholder="pahlawan"
+                />
+              </div>
+
+              <button
+                class="h-[38px] px-6 bg-[#0d215e] rounded-[9px] text-white text-[12px] font-medium"
+                data-id="resetFilter"
+              >
+                Reset Filter
+              </button>
+
+              <button class="w-[38px] h-[38px] rounded-full bg-[#0d215e] flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px] text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- list -->
+            <div class="space-y-[12px]">
+              <!-- item 1 -->
+              <article class="archive-card collapsed" data-archive-card>
+                <div class="archive-meta">
+                  <h3 class="archive-title">
+                    Tugu Pahlawan menjulang angkasa jantung hati<br />
+                    arek Surabaya
+                  </h3>
+              
+                  <div class="meta-line">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
+                    </svg>
+                    <span>30 Aug 2003 - 30 Aug 2003</span>
+                  </div>
+              
+                  <div class="meta-line">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0c2.5 0 4-4 4-9s-1.5-9-4-9-4 4-4 9 1.5 9 4 9Zm-9-9h18"/>
+                    </svg>
+                    <span>Dinas Perpustakaan dan Kearsipan Kota Surabaya</span>
+                  </div>
+              
+                    <div class="meta-bottom">
+                    <span class="count-chip">33</span>
+
+                    <a href="detail.html" class="tag-chip">
+                        <span>Selengkapnya</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-[12px] h-[12px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="m9 5 7 7-7 7"/>
+                        </svg>
+                    </a>
+                    </div>
+                </div>
+              
+                <button type="button" class="archive-toggle" data-archive-toggle aria-label="Toggle panel">&gt;</button>
+              
+                <div class="archive-image">
+                  <img src="assets/deskripsi1.png" alt="Arsip 1">
+                </div>
+              </article>
+
+              <!-- item 2 -->
+              <article class="archive-card collapsed" data-archive-card>
+                <div class="archive-meta">
+                  <h3 class="archive-title">
+                    Tugu Pahlawan menjulang angkasa jantung hati<br />
+                    arek Surabaya
+                  </h3>
+              
+                  <div class="meta-line">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
+                    </svg>
+                    <span>30 Aug 2003 - 30 Aug 2003</span>
+                  </div>
+              
+                  <div class="meta-line">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0c2.5 0 4-4 4-9s-1.5-9-4-9-4 4-4 9 1.5 9 4 9Zm-9-9h18"/>
+                    </svg>
+                    <span>Dinas Perpustakaan dan Kearsipan Kota Surabaya</span>
+                  </div>
+              
+                    <div class="meta-bottom">
+                    <span class="count-chip">33</span>
+
+                    <a href="detail.html" class="tag-chip">
+                        <span>Selengkapnya</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-[12px] h-[12px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="m9 5 7 7-7 7"/>
+                        </svg>
+                    </a>
+                    </div>
+                </div>
+              
+                <button type="button" class="archive-toggle" data-archive-toggle aria-label="Toggle panel">&gt;</button>
+              
+                <div class="archive-image">
+                  <img src="assets/deskripsi1.png" alt="Arsip 1">
+                </div>
+              </article>
+
+              <!-- item 3 -->
+              <article class="archive-card collapsed" data-archive-card>
+                <div class="archive-meta">
+                  <h3 class="archive-title">
+                    Tugu Pahlawan menjulang angkasa jantung hati<br />
+                    arek Surabaya
+                  </h3>
+              
+                  <div class="meta-line">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
+                    </svg>
+                    <span>30 Aug 2003 - 30 Aug 2003</span>
+                  </div>
+              
+                  <div class="meta-line">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0c2.5 0 4-4 4-9s-1.5-9-4-9-4 4-4 9 1.5 9 4 9Zm-9-9h18"/>
+                    </svg>
+                    <span>Dinas Perpustakaan dan Kearsipan Kota Surabaya</span>
+                  </div>
+              
+                    <div class="meta-bottom">
+                    <span class="count-chip">33</span>
+
+                    <a href="detail.html" class="tag-chip">
+                        <span>Selengkapnya</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-[12px] h-[12px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="m9 5 7 7-7 7"/>
+                        </svg>
+                    </a>
+                    </div>
+                </div>
+              
+                <button type="button" class="archive-toggle" data-archive-toggle aria-label="Toggle panel">&gt;</button>
+              
+                <div class="archive-image">
+                  <img src="assets/deskripsi1.png" alt="Arsip 1">
+                </div>
+              </article>
+
+              <!-- item 4 -->
+              <article class="archive-card collapsed" data-archive-card>
+                <div class="archive-meta">
+                  <h3 class="archive-title">
+                    Tugu Pahlawan menjulang angkasa jantung hati<br />
+                    arek Surabaya
+                  </h3>
+              
+                  <div class="meta-line">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
+                    </svg>
+                    <span>30 Aug 2003 - 30 Aug 2003</span>
+                  </div>
+              
+                  <div class="meta-line">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0c2.5 0 4-4 4-9s-1.5-9-4-9-4 4-4 9 1.5 9 4 9Zm-9-9h18"/>
+                    </svg>
+                    <span>Dinas Perpustakaan dan Kearsipan Kota Surabaya</span>
+                  </div>
+              
+                    <div class="meta-bottom">
+                    <span class="count-chip">33</span>
+
+                    <a href="detail.html" class="tag-chip">
+                        <span>Selengkapnya</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-[12px] h-[12px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="m9 5 7 7-7 7"/>
+                        </svg>
+                    </a>
+                    </div>
+                </div>
+              
+                <button type="button" class="archive-toggle" data-archive-toggle aria-label="Toggle panel">&gt;</button>
+              
+                <div class="archive-image">
+                  <img src="assets/deskripsi1.png" alt="Arsip 1">
+                </div>
+              </article>
+
+              <!-- item 5 -->
+              <article class="archive-card collapsed" data-archive-card>
+                <div class="archive-meta">
+                  <h3 class="archive-title">
+                    Tugu Pahlawan menjulang angkasa jantung hati<br />
+                    arek Surabaya
+                  </h3>
+              
+                  <div class="meta-line">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
+                    </svg>
+                    <span>30 Aug 2003 - 30 Aug 2003</span>
+                  </div>
+              
+                  <div class="meta-line">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0c2.5 0 4-4 4-9s-1.5-9-4-9-4 4-4 9 1.5 9 4 9Zm-9-9h18"/>
+                    </svg>
+                    <span>Dinas Perpustakaan dan Kearsipan Kota Surabaya</span>
+                  </div>
+              
+                    <div class="meta-bottom">
+                    <span class="count-chip">33</span>
+
+                    <a href="detail.html" class="tag-chip">
+                        <span>Selengkapnya</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-[12px] h-[12px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="m9 5 7 7-7 7"/>
+                        </svg>
+                    </a>
+                    </div>
+                </div>
+              
+                <button type="button" class="archive-toggle" data-archive-toggle aria-label="Toggle panel">&gt;</button>
+              
+                <div class="archive-image">
+                  <img src="assets/deskripsi1.png" alt="Arsip 1">
+                </div>
+              </article>
+            </div>
+
+            <!-- pagination -->
+            <div class="flex justify-end mt-6">
+                <div class="pagination-wrap">
+                  <button class="pagination-btn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="pagination-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="m15 19-7-7 7-7"/>
+                    </svg>
+                    <span>Prev</span>
+                  </button>
+              
+                  <button class="pagination-page active">1</button>
+                  <button class="pagination-page">2</button>
+                  <button class="pagination-page">3</button>
+                  <span class="pagination-dots">...</span>
+                  <button class="pagination-page">82</button>
+              
+                  <button class="pagination-btn">
+                    <span>Next</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="pagination-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="m9 5 7 7-7 7"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const translations = {
+      id: {
+        htmlLang: "id",
+        siteTitle: "Jaringan Informasi Kearsipan Nasional",
+        about: "Tentang Kami",
+        login: "Login",
+        navHome: "Beranda",
+        navDesc: "Deskripsi Arsip",
+        navVirtual: "Pameran Virtual",
+        navAccess: "Layanan Akses",
+        navFaq: "FAQ",
+        filterLanguage: "Bahasa",
+        allLanguage: "Semua Bahasa",
+        archiveManager: "Pengelola Arsip",
+        archiveCreator: "Pencipta Arsip",
+        resetFilter: "Reset Filter",
+        searchPlaceholder: "pahlawan",
+        allArchiveManager: "Semua Pengelola Arsip",
+        allArchiveCreator: "Semua Pencipta Arsip",
+      },
+      en: {
+        htmlLang: "en",
+        siteTitle: "National Archival Information Network",
+        about: "About Us",
+        login: "Login",
+        navHome: "Home",
+        navDesc: "Archive Description",
+        navVirtual: "Virtual Exhibition",
+        navAccess: "Access Services",
+        navFaq: "FAQ",
+        filterLanguage: "Language",
+        allLanguage: "All Languages",
+        archiveManager: "Archive Manager",
+        archiveCreator: "Archive Creator",
+        resetFilter: "Reset Filter",
+        searchPlaceholder: "hero",
+        allArchiveManager: "All Archive Managers",
+        allArchiveCreator: "All Archive Creators",
+      }
+    };
+
+    const languageSwitcher = document.getElementById("languageSwitcher");
+    const searchInput = document.getElementById("searchInput");
+
+    function setLanguage(lang) {
+      const t = translations[lang];
+      document.documentElement.lang = t.htmlLang;
+
+      document.querySelectorAll("[data-id]").forEach(el => {
+        const key = el.getAttribute("data-id");
+        if (t[key]) {
+          el.textContent = t[key];
+        }
+      });
+
+      searchInput.placeholder = t.searchPlaceholder;
+    }
+
+    languageSwitcher.addEventListener("change", function () {
+      setLanguage(this.value);
+    });
+
+    setLanguage("id");
+
+    const userMenuButton = document.getElementById("userMenuButton");
+    const userDropdown = document.getElementById("userDropdown");
+
+    function toggleDropdown() {
+      const isOpen = userDropdown.classList.contains("dropdown-open");
+
+      if (isOpen) {
+        userDropdown.classList.remove("dropdown-open");
+        userDropdown.classList.add("dropdown-enter");
+      } else {
+        userDropdown.classList.remove("dropdown-enter");
+        userDropdown.classList.add("dropdown-open");
+      }
+    }
+
+    userMenuButton.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!userDropdown.contains(e.target) && !userMenuButton.contains(e.target)) {
+        userDropdown.classList.remove("dropdown-open");
+        userDropdown.classList.add("dropdown-enter");
+      }
+    });
+
+    const navLinks = document.querySelectorAll(".nav-link");
+    const navIndicator = document.getElementById("navIndicator");
+
+    function moveIndicator(target) {
+      const parentRect = target.closest(".nav-menu").getBoundingClientRect();
+      const rect = target.getBoundingClientRect();
+
+      navIndicator.style.width = rect.width - 28 + "px";
+      navIndicator.style.left = rect.left - parentRect.left + 14 + "px";
+      navIndicator.style.opacity = "1";
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener("click", function (e) {
+        if (this.getAttribute("href") === "#") {
+          e.preventDefault();
+        }
+        navLinks.forEach(item => item.classList.remove("active"));
+        this.classList.add("active");
+        moveIndicator(this);
+      });
+    });
+
+    window.addEventListener("load", () => {
+      const activeLink = document.querySelector(".nav-link.active");
+      if (activeLink) moveIndicator(activeLink);
+    });
+
+    window.addEventListener("resize", () => {
+      const activeLink = document.querySelector(".nav-link.active");
+      if (activeLink) moveIndicator(activeLink);
+    });
+  </script>
+
+    <script>
+    const accordionButtons = document.querySelectorAll(".accordion-btn");
+  
+    accordionButtons.forEach(button => {
+      button.addEventListener("click", function () {
+        const section = this.parentElement;
+        section.classList.toggle("active");
+      });
+    });
+  </script>
+
+<script>
+    const archiveToggles = document.querySelectorAll("[data-archive-toggle]");
+  
+    archiveToggles.forEach(toggle => {
+      const card = toggle.closest("[data-archive-card]");
+  
+      // set icon awal berdasarkan kondisi class
+      toggle.innerHTML = card.classList.contains("collapsed") ? "&gt;" : "&lt;";
+  
+      toggle.addEventListener("click", function () {
+        const isCollapsed = card.classList.toggle("collapsed");
+        this.innerHTML = isCollapsed ? "&gt;" : "&lt;";
+      });
+    });
+</script>
+
+<script>
+    const paginationPages = document.querySelectorAll(".pagination-page");
+  
+    paginationPages.forEach(page => {
+      page.addEventListener("click", function () {
+        paginationPages.forEach(item => item.classList.remove("active"));
+        this.classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>

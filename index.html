@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JIKN - Landing Page</title>
+
+  <!-- Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #f5f5f5;
+      overflow-x: hidden;
+    }
+
+    .soft-shadow {
+      box-shadow: 0 8px 20px rgba(0,0,0,.12);
+    }
+
+    .card-shadow {
+      box-shadow: 0 10px 24px rgba(0,0,0,.12);
+    }
+
+    .nav-pill {
+      border-radius: 999px;
+    }
+
+    /* HERO SLIDER */
+    .hero-slider {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: scale(1.12) rotate(0.6deg);
+      clip-path: circle(0% at 50% 50%);
+      transition:
+        opacity 1.2s ease,
+        transform 3s ease,
+        clip-path 1.4s cubic-bezier(.19,1,.22,1);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .hero-slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(0,0,0,.36), rgba(0,0,0,.36));
+    }
+
+    .hero-slide.active {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+      clip-path: circle(150% at 50% 50%);
+      z-index: 2;
+    }
+
+    /* navbar indicator */
+    .nav-menu {
+      position: relative;
+    }
+
+    .nav-indicator {
+      position: absolute;
+      bottom: 10px;
+      height: 3px;
+      border-radius: 999px;
+      background: white;
+      transition: all 0.35s cubic-bezier(.4,0,.2,1);
+      left: 0;
+      width: 0;
+      opacity: 0;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color .25s ease;
+    }
+
+    .nav-link:hover {
+      color: #ffffff;
+    }
+
+    .nav-link.active {
+      font-weight: 500;
+    }
+
+    .lang-select:focus,
+    .search-input:focus {
+      outline: none;
+    }
+
+    .dropdown-enter {
+      opacity: 0;
+      transform: translateY(8px) scale(.98);
+      pointer-events: none;
+    }
+
+    .dropdown-open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .dropdown-panel {
+      transition: all .22s ease;
+      transform-origin: top right;
+    }
+  </style>
+</head>
+<body class="text-[#1f1f1f]">
+
+  <div class="w-full min-h-screen bg-white">
+    <!-- TOP BAR -->
+    <header class="w-full bg-white border-b border-gray-200">
+      <div class="w-full px-6 xl:px-10 py-3">
+        <div class="flex items-center justify-between gap-4">
+          <!-- Left -->
+          <div class="flex items-center gap-3 min-w-0">
+            <img
+              src="assets/logo.png"
+              alt="Logo JIKN"
+              class="w-12 h-12 object-contain shrink-0"
+            />
+            <div
+              id="siteTitle"
+              class="text-[20px] xl:text-[22px] font-semibold text-[#21407c] leading-tight"
+              data-id="siteTitle"
+            >
+              Jaringan Informasi Kearsipan Nasional
+            </div>
+          </div>
+
+          <!-- Right -->
+          <div class="flex items-center gap-4 shrink-0">
+            <!-- Language -->
+            <select
+              id="languageSwitcher"
+              class="lang-select text-[12px] border border-gray-300 rounded px-3 py-1.5 text-gray-600 bg-white"
+            >
+              <option value="id">Indonesia</option>
+              <option value="en">English</option>
+            </select>
+
+            <a
+              href="#"
+              id="aboutText"
+              class="text-[12px] text-gray-600 hover:text-gray-800"
+              data-id="about"
+            >
+              Tentang Kami
+            </a>
+
+            <!-- User dropdown -->
+            <div class="relative">
+              <button
+                id="userMenuButton"
+                type="button"
+                class="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.125a7.5 7.5 0 0115 0" />
+                </svg>
+              </button>
+
+              <div
+                id="userDropdown"
+                class="dropdown-panel dropdown-enter absolute right-0 top-12 w-44 bg-white border border-gray-200 rounded-xl shadow-lg p-2 z-50"
+              >
+                <a
+                  href="login.html"
+                  class="block px-4 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-100"
+                  id="loginMenuText"
+                  data-id="login"
+                >
+                  Login
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NAV -->
+        <div class="mt-3">
+          <nav class="bg-[#0d215e] nav-pill overflow-hidden px-3">
+            <div class="nav-menu">
+                <ul id="navList" class="flex items-center text-white text-[14px] relative">
+                  <li>
+                    <a href="index.html" class="nav-link active block px-8 py-4" data-id="navHome">Beranda</a>
+                  </li>
+                  <li>
+                    <a href="deskripsi.html" class="nav-link block px-8 py-4" data-id="navDesc">Deskripsi Arsip</a>
+                  </li>
+                  <li>
+                    <a href="pameran.html" class="nav-link block px-8 py-4" data-id="navVirtual">Pameran Virtual</a>
+                  </li>
+                  <li>
+                    <a href="layanan.html" class="nav-link block px-8 py-4" data-id="navAccess">Layanan Akses</a>
+                  </li>
+                  <li>
+                    <a href="faq.html" class="nav-link block px-8 py-4" data-id="navFaq">FAQ</a>
+                  </li>
+                </ul>
+                <span id="navIndicator" class="nav-indicator"></span>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="relative w-full h-[680px] overflow-hidden">
+      <!-- Slider background -->
+      <div class="hero-slider">
+        <div class="hero-slide active" style="background-image: url('assets/bg1.png');"></div>
+        <div class="hero-slide" style="background-image: url('assets/bg2.jpg');"></div>
+        <div class="hero-slide" style="background-image: url('assets/bg3.jpeg');"></div>
+      </div>
+
+      <!-- Hero content -->
+      <div class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6">
+        <h1
+          id="heroTitle"
+          class="text-white text-[52px] font-bold mb-8"
+          data-id="heroTitle"
+        >
+          Arsip Sebagai Jati Diri Bangsa
+        </h1>
+
+        <p
+          id="heroDesc"
+          class="text-white text-[19px] leading-8 max-w-[980px] mb-16"
+          data-id="heroDesc"
+        >
+          Simpul Jaringan mengolah informasi kearsipan yang dimiliki dalam rangka membantu temu balik
+          baik dalam format digital maupun lokasi fisik arsip di tempat penyimpanannya
+        </p>
+
+        <!-- Search -->
+        <div class="w-full max-w-[860px]">
+          <div class="bg-white rounded-xl h-[58px] flex items-center px-5 mb-6 soft-shadow">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Cari..."
+              class="search-input w-full text-[18px] text-gray-500 placeholder:text-gray-400 bg-transparent"
+            />
+          </div>
+
+          <div class="flex items-center justify-center gap-4">
+            <button
+              id="advancedSearchBtn"
+              class="bg-white text-[#222] text-[16px] px-10 py-3 rounded-xl card-shadow hover:opacity-95 transition"
+              data-id="advancedSearch"
+            >
+              Pencarian Lengkap
+            </button>
+            <button
+              id="searchBtn"
+              class="bg-[#163b88] text-white text-[16px] px-14 py-3 rounded-xl card-shadow hover:opacity-95 transition"
+              data-id="searchArchive"
+            >
+              Cari Arsip
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENU CARDS -->
+    <section class="relative -mt-12 z-10">
+      <div class="w-full px-10 xl:px-20">
+        <div class="grid grid-cols-4 gap-6 max-w-[1200px] mx-auto">
+          <!-- Card 1 -->
+          <div class="bg-[#173b7c] text-white rounded-[22px] px-4 py-5 card-shadow h-[110px] flex flex-col items-center justify-center">
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white flex items-center justify-center mb-3">
+              <img src="assets/card1.png" alt="ANRI" class="w-full h-full object-cover rounded-full">
+            </div>
+            <span class="text-[16px] font-semibold">ANRI</span>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="bg-[#f4f4f4] rounded-[22px] px-4 py-5 card-shadow h-[110px] flex flex-col items-center justify-center">
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white flex items-center justify-center mb-3">
+              <img src="assets/card2.png" alt="Sistem Informasi Arsip" class="w-full h-full object-cover rounded-full">
+            </div>
+            <span class="text-[15px] text-gray-700 text-center leading-tight" data-id="cardSIA1">Sistem Informasi Arsip</span>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="bg-[#f4f4f4] rounded-[22px] px-4 py-5 card-shadow h-[110px] flex flex-col items-center justify-center">
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white flex items-center justify-center mb-3">
+              <img src="assets/card3.png" alt="ANRI" class="w-full h-full object-cover rounded-full">
+            </div>
+            <span class="text-[15px] text-gray-700 text-center leading-tight">ANRI</span>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="bg-[#f4f4f4] rounded-[22px] px-4 py-5 card-shadow h-[110px] flex flex-col items-center justify-center">
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white flex items-center justify-center mb-3">
+              <img src="assets/card4.png" alt="Sistem Informasi Arsip" class="w-full h-full object-cover rounded-full">
+            </div>
+            <span class="text-[15px] text-gray-700 text-center leading-tight" data-id="cardSIA2">Sistem Informasi Arsip</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTENT -->
+    <section class="bg-[#ffffff] pt-20 pb-16 px-10 xl:px-20">
+      <div class="max-w-[1200px] mx-auto grid grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 class="text-[40px] font-bold text-black mb-6">ANRI</h2>
+          <p
+            id="contentDesc"
+            class="text-[18px] leading-9 text-[#1f1f1f] max-w-[620px]"
+            data-id="contentDesc"
+          >
+            Arsip Nasional Republik Indonesia (disingkat ANRI) merupakan salah satu lembaga pemerintah
+            nonkementerian yang dibentuk berdasarkan Undang-Undang No.7/1971 tentang Ketentuan-ketentuan
+            Pokok Kearsipan yang kemudian diubah menjadi Undang-Undang No. 43/2009 Tentang Kearsipan
+            dalam rangka melaksanakan tugas pemerintahaan dibidang kearsipan sesuai dengan ketentuan
+            peraturan perundang-undangan yang berlaku.
+          </p>
+        </div>
+
+        <div class="flex justify-end">
+          <img
+            src="assets/illustration.png"
+            alt="Ilustrasi arsip"
+            class="w-[520px] max-w-full object-contain"
+          />
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // =========================
+    // TRANSLATION
+    // =========================
+    const translations = {
+      id: {
+        htmlLang: "id",
+        siteTitle: "Jaringan Informasi Kearsipan Nasional",
+        about: "Tentang Kami",
+        login: "Login",
+        navHome: "Beranda",
+        navDesc: "Deskripsi Arsip",
+        navVirtual: "Pameran Virtual",
+        navAccess: "Layanan Akses",
+        navFaq: "FAQ",
+        heroTitle: "Arsip Sebagai Jati Diri Bangsa",
+        heroDesc: "Simpul Jaringan mengolah informasi kearsipan yang dimiliki dalam rangka membantu temu balik baik dalam format digital maupun lokasi fisik arsip di tempat penyimpanannya",
+        placeholder: "Cari...",
+        advancedSearch: "Pencarian Lengkap",
+        searchArchive: "Cari Arsip",
+        cardSIA1: "Sistem Informasi Arsip",
+        cardSIA2: "Sistem Informasi Arsip",
+        contentDesc: "Arsip Nasional Republik Indonesia (disingkat ANRI) merupakan salah satu lembaga pemerintah nonkementerian yang dibentuk berdasarkan Undang-Undang No.7/1971 tentang Ketentuan-ketentuan Pokok Kearsipan yang kemudian diubah menjadi Undang-Undang No. 43/2009 Tentang Kearsipan dalam rangka melaksanakan tugas pemerintahaan dibidang kearsipan sesuai dengan ketentuan peraturan perundang-undangan yang berlaku."
+      },
+      en: {
+        htmlLang: "en",
+        siteTitle: "National Archival Information Network",
+        about: "About Us",
+        login: "Login",
+        navHome: "Home",
+        navDesc: "Archive Description",
+        navVirtual: "Virtual Exhibition",
+        navAccess: "Access Services",
+        navFaq: "FAQ",
+        heroTitle: "Archives as the Nation’s Identity",
+        heroDesc: "The Network Node manages archival information it owns in order to help retrieval, both in digital format and in the physical location of archives at their storage institutions.",
+        placeholder: "Search...",
+        advancedSearch: "Advanced Search",
+        searchArchive: "Search Archive",
+        cardSIA1: "Archive Information System",
+        cardSIA2: "Archive Information System",
+        contentDesc: "The National Archives of the Republic of Indonesia (abbreviated as ANRI) is one of the non-ministerial government institutions established under Law No. 7 of 1971 concerning Basic Archival Provisions, which was later amended by Law No. 43 of 2009 concerning Archives, in order to carry out governmental duties in the archival sector in accordance with the applicable laws and regulations."
+      }
+    };
+
+    const languageSwitcher = document.getElementById("languageSwitcher");
+    const searchInput = document.getElementById("searchInput");
+
+    function setLanguage(lang) {
+      const t = translations[lang];
+      document.documentElement.lang = t.htmlLang;
+
+      document.querySelectorAll("[data-id]").forEach(el => {
+        const key = el.getAttribute("data-id");
+        if (t[key]) {
+          el.textContent = t[key];
+        }
+      });
+
+      searchInput.placeholder = t.placeholder;
+    }
+
+    languageSwitcher.addEventListener("change", function () {
+      setLanguage(this.value);
+    });
+
+    setLanguage("id");
+
+    // =========================
+    // DROPDOWN LOGIN
+    // =========================
+    const userMenuButton = document.getElementById("userMenuButton");
+    const userDropdown = document.getElementById("userDropdown");
+
+    function toggleDropdown() {
+      const isOpen = userDropdown.classList.contains("dropdown-open");
+
+      if (isOpen) {
+        userDropdown.classList.remove("dropdown-open");
+        userDropdown.classList.add("dropdown-enter");
+      } else {
+        userDropdown.classList.remove("dropdown-enter");
+        userDropdown.classList.add("dropdown-open");
+      }
+    }
+
+    userMenuButton.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!userDropdown.contains(e.target) && !userMenuButton.contains(e.target)) {
+        userDropdown.classList.remove("dropdown-open");
+        userDropdown.classList.add("dropdown-enter");
+      }
+    });
+
+    // =========================
+    // NAVBAR ACTIVE + SLIDER INDICATOR
+    // =========================
+    const navLinks = document.querySelectorAll(".nav-link");
+    const navIndicator = document.getElementById("navIndicator");
+
+    function moveIndicator(target) {
+      const parentRect = target.closest(".nav-menu").getBoundingClientRect();
+      const rect = target.getBoundingClientRect();
+
+      navIndicator.style.width = rect.width - 28 + "px";
+      navIndicator.style.left = rect.left - parentRect.left + 14 + "px";
+      navIndicator.style.opacity = "1";
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener("click", function (e) {
+        navLinks.forEach(item => item.classList.remove("active"));
+        this.classList.add("active");
+        moveIndicator(this);
+      });
+    });
+
+    window.addEventListener("load", () => {
+      const activeLink = document.querySelector(".nav-link.active");
+      if (activeLink) moveIndicator(activeLink);
+    });
+
+    window.addEventListener("resize", () => {
+      const activeLink = document.querySelector(".nav-link.active");
+      if (activeLink) moveIndicator(activeLink);
+    });
+
+    // =========================
+    // HERO SLIDER
+    // =========================
+    const slides = document.querySelectorAll(".hero-slide");
+    let currentSlide = 0;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === index);
+      });
+    }
+
+    setInterval(() => {
+      currentSlide = (currentSlide + 1) % slides.length;
+      showSlide(currentSlide);
+    }, 3000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JIKN - Login</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #1f1f1f;
+      overflow-x: hidden;
+    }
+
+    .nav-pill {
+      border-radius: 999px;
+    }
+
+    .nav-menu {
+      position: relative;
+    }
+
+    .nav-indicator {
+      position: absolute;
+      bottom: 10px;
+      height: 3px;
+      border-radius: 999px;
+      background: white;
+      transition: all 0.35s cubic-bezier(.4,0,.2,1);
+      left: 0;
+      width: 0;
+      opacity: 0;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color .25s ease;
+    }
+
+    .nav-link:hover {
+      color: #ffffff;
+    }
+
+    .nav-link.active {
+      font-weight: 500;
+    }
+
+    .lang-select:focus,
+    .login-input:focus {
+      outline: none;
+    }
+
+    .dropdown-enter {
+      opacity: 0;
+      transform: translateY(8px) scale(.98);
+      pointer-events: none;
+    }
+
+    .dropdown-open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .dropdown-panel {
+      transition: all .22s ease;
+      transform-origin: top right;
+    }
+
+    .login-bg {
+      background:
+        radial-gradient(1200px 500px at 88% 100%, rgba(5, 22, 101, .92) 0%, rgba(21, 41, 122, .78) 20%, rgba(161, 172, 204, .38) 52%, rgba(232, 238, 246, 0) 78%),
+        linear-gradient(to bottom, #eff4f8 0%, #edf2f7 56%, #d6ddeb 78%, #adb7d0 90%, #7684b0 100%);
+    }
+
+    .login-card {
+      box-shadow: 0 10px 30px rgba(58, 70, 104, 0.08);
+    }
+
+    .field-box {
+      box-shadow: inset 0 0 0 1px rgba(186, 199, 219, 0.75);
+    }
+
+    .google-btn {
+      background: #dddddd;
+    }
+
+    .google-btn:hover {
+      background: #d5d5d5;
+    }
+
+    .back-link {
+      color: #4db3ff;
+    }
+
+    .back-link:hover {
+      color: #2897ea;
+    }
+  </style>
+</head>
+<body class="text-[#1f1f1f]">
+
+  <div class="w-full min-h-screen bg-white max-w-[1365px] mx-auto">
+    <!-- TOP BAR -->
+    <header class="w-full bg-white border-b border-gray-200">
+      <div class="w-full px-6 xl:px-10 py-3">
+        <div class="flex items-center justify-between gap-4">
+          <!-- Left -->
+          <div class="flex items-center gap-3 min-w-0">
+            <img
+              src="assets/logo.png"
+              alt="Logo JIKN"
+              class="w-12 h-12 object-contain shrink-0"
+            />
+            <div
+              id="siteTitle"
+              class="text-[20px] xl:text-[22px] font-semibold text-[#21407c] leading-tight"
+              data-id="siteTitle"
+            >
+              Jaringan Informasi Kearsipan Nasional
+            </div>
+          </div>
+
+          <!-- Right -->
+          <div class="flex items-center gap-4 shrink-0">
+            <select
+              id="languageSwitcher"
+              class="lang-select text-[12px] border border-gray-300 rounded px-3 py-1.5 text-gray-600 bg-white"
+            >
+              <option value="id">Indonesia</option>
+              <option value="en">English</option>
+            </select>
+
+            <a
+              href="#"
+              id="aboutText"
+              class="text-[12px] text-gray-600 hover:text-gray-800"
+              data-id="about"
+            >
+              Tentang Kami
+            </a>
+
+            <div class="relative">
+              <button
+                id="userMenuButton"
+                type="button"
+                class="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.125a7.5 7.5 0 0115 0" />
+                </svg>
+              </button>
+
+              <div
+                id="userDropdown"
+                class="dropdown-panel dropdown-enter absolute right-0 top-12 w-44 bg-white border border-gray-200 rounded-xl shadow-lg p-2 z-50"
+              >
+                <a
+                  href="#"
+                  class="block px-4 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-100"
+                  id="loginMenuText"
+                  data-id="login"
+                >
+                  Login
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NAV -->
+        <div class="mt-3">
+          <nav class="bg-[#0d215e] nav-pill overflow-hidden px-3">
+            <div class="nav-menu">
+              <ul id="navList" class="flex items-center text-white text-[14px] relative">
+                <li>
+                  <a href="index.html" class="nav-link block px-8 py-4" data-id="navHome">Beranda</a>
+                </li>
+                <li>
+                  <a href="deskripsi.html" class="nav-link block px-8 py-4" data-id="navDesc">Deskripsi Arsip</a>
+                </li>
+                <li>
+                  <a href="pameran.html" class="nav-link block px-8 py-4" data-id="navVirtual">Pameran Virtual</a>
+                </li>
+                <li>
+                  <a href="layanan.html" class="nav-link block px-8 py-4" data-id="navAccess">Layanan Akses</a>
+                </li>
+                <li>
+                  <a href="faq.html" class="nav-link block px-8 py-4" data-id="navFaq">FAQ</a>
+                </li>
+              </ul>
+              <span id="navIndicator" class="nav-indicator"></span>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- LOGIN CONTENT ONLY -->
+    <section class="login-bg min-h-[calc(100vh-108px)] flex items-start justify-center px-6 pt-[120px] pb-16">
+      <div class="w-full max-w-[700px]">
+        <div class="login-card bg-[#fbfbfc] rounded-[18px] w-full max-w-[700px] mx-auto px-[74px] pt-[42px] pb-[38px]">
+          <h1
+            class="text-center text-[#1e2d68] text-[20px] md:text-[22px] font-bold tracking-[0.2px] leading-tight"
+            data-id="loginHeading"
+            style="font-family: Georgia, 'Times New Roman', serif;"
+          >
+            ARSIP NASIONAL REPUBLIK INDONESIA
+          </h1>
+
+          <p
+            class="text-center text-[#273b7a] text-[17px] md:text-[18px] leading-[1.45] font-medium mt-4"
+            data-id="loginSubheading"
+          >
+            Jaringan Informasi Kearsipan Nasional<br />
+            Republik Indonesia
+          </p>
+
+          <form class="mt-8">
+            <!-- Email -->
+            <div class="field-box h-[44px] rounded-[6px] bg-[#e8eef5] flex items-center px-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px] text-[#273b7a] shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2.25c-3 0-9 1.5-9 4.5V21h18v-2.25c0-3-6-4.5-9-4.5Z"/>
+              </svg>
+              <input
+                id="emailInput"
+                type="email"
+                class="login-input ml-3 w-full bg-transparent text-[11px] text-[#4e5d79] placeholder:text-[#7f8ca4] uppercase tracking-[0.4px]"
+                placeholder="E-MAIL"
+              />
+            </div>
+
+            <!-- Password -->
+            <div class="field-box h-[44px] rounded-[6px] bg-white flex items-center px-3 mt-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-[15px] h-[15px] text-[#273b7a] shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-6 0V6a2 2 0 1 1 4 0v2Z"/>
+              </svg>
+
+              <input
+                id="passwordInput"
+                type="password"
+                class="login-input ml-3 w-full bg-transparent text-[11px] text-[#4e5d79] placeholder:text-[#7f8ca4] uppercase tracking-[0.4px]"
+                placeholder="PASSWORD"
+              />
+
+              <button type="button" id="togglePassword" class="text-[#273b7a] hover:opacity-80 transition">
+                <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" class="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58M9.88 5.09A9.77 9.77 0 0112 4.5c5.25 0 9.27 3.44 10.5 7.5a11.83 11.83 0 01-4.12 5.94M6.61 6.61A11.82 11.82 0 001.5 12c1.23 4.06 5.25 7.5 10.5 7.5a9.77 9.77 0 005.39-1.61"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Login button -->
+            <button
+              type="submit"
+              class="w-full h-[42px] rounded-[8px] bg-[#0d215e] hover:bg-[#10296f] text-white text-[18px] font-semibold mt-4 transition"
+              data-id="loginButton"
+            >
+              Masuk
+            </button>
+
+            <!-- Divider -->
+            <div class="flex items-center gap-4 mt-5">
+              <div class="h-[1px] bg-[#cfd3da] flex-1"></div>
+              <span class="text-[15px] text-[#757b8b]" data-id="orText">atau</span>
+              <div class="h-[1px] bg-[#cfd3da] flex-1"></div>
+            </div>
+
+            <!-- Google button -->
+            <button
+              type="button"
+              class="google-btn w-full h-[42px] rounded-[8px] text-[#4a4f73] text-[18px] font-semibold mt-4 transition"
+              data-id="googleLogin"
+            >
+              Masuk dengan Google
+            </button>
+
+            <!-- Back -->
+            <div class="text-center mt-6">
+              <a
+                href="#"
+                class="back-link text-[16px] font-medium transition"
+                data-id="backHome"
+              >
+                Kembali ke Beranda
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const translations = {
+      id: {
+        htmlLang: "id",
+        siteTitle: "Jaringan Informasi Kearsipan Nasional",
+        about: "Tentang Kami",
+        login: "Login",
+        navHome: "Beranda",
+        navDesc: "Deskripsi Arsip",
+        navVirtual: "Pameran Virtual",
+        navAccess: "Layanan Akses",
+        navFaq: "FAQ",
+        loginHeading: "ARSIP NASIONAL REPUBLIK INDONESIA",
+        loginSubheading: "Jaringan Informasi Kearsipan Nasional<br>Republik Indonesia",
+        emailPlaceholder: "E-MAIL",
+        passwordPlaceholder: "PASSWORD",
+        loginButton: "Masuk",
+        orText: "atau",
+        googleLogin: "Masuk dengan Google",
+        backHome: "Kembali ke Beranda"
+      },
+      en: {
+        htmlLang: "en",
+        siteTitle: "National Archival Information Network",
+        about: "About Us",
+        login: "Login",
+        navHome: "Home",
+        navDesc: "Archive Description",
+        navVirtual: "Virtual Exhibition",
+        navAccess: "Access Services",
+        navFaq: "FAQ",
+        loginHeading: "NATIONAL ARCHIVES OF THE REPUBLIC OF INDONESIA",
+        loginSubheading: "National Archival Information Network<br>Republic of Indonesia",
+        emailPlaceholder: "E-MAIL",
+        passwordPlaceholder: "PASSWORD",
+        loginButton: "Sign In",
+        orText: "or",
+        googleLogin: "Sign in with Google",
+        backHome: "Back to Home"
+      }
+    };
+
+    const languageSwitcher = document.getElementById("languageSwitcher");
+    const emailInput = document.getElementById("emailInput");
+    const passwordInput = document.getElementById("passwordInput");
+
+    function setLanguage(lang) {
+      const t = translations[lang];
+      document.documentElement.lang = t.htmlLang;
+
+      document.querySelectorAll("[data-id]").forEach(el => {
+        const key = el.getAttribute("data-id");
+        if (!t[key]) return;
+
+        if (key === "loginSubheading") {
+          el.innerHTML = t[key];
+        } else {
+          el.textContent = t[key];
+        }
+      });
+
+      emailInput.placeholder = t.emailPlaceholder;
+      passwordInput.placeholder = t.passwordPlaceholder;
+    }
+
+    languageSwitcher.addEventListener("change", function () {
+      setLanguage(this.value);
+    });
+
+    setLanguage("id");
+
+    // dropdown
+    const userMenuButton = document.getElementById("userMenuButton");
+    const userDropdown = document.getElementById("userDropdown");
+
+    function toggleDropdown() {
+      const isOpen = userDropdown.classList.contains("dropdown-open");
+
+      if (isOpen) {
+        userDropdown.classList.remove("dropdown-open");
+        userDropdown.classList.add("dropdown-enter");
+      } else {
+        userDropdown.classList.remove("dropdown-enter");
+        userDropdown.classList.add("dropdown-open");
+      }
+    }
+
+    userMenuButton.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!userDropdown.contains(e.target) && !userMenuButton.contains(e.target)) {
+        userDropdown.classList.remove("dropdown-open");
+        userDropdown.classList.add("dropdown-enter");
+      }
+    });
+
+    // navbar indicator
+    const navLinks = document.querySelectorAll(".nav-link");
+    const navIndicator = document.getElementById("navIndicator");
+
+    function moveIndicator(target) {
+      const parentRect = target.closest(".nav-menu").getBoundingClientRect();
+      const rect = target.getBoundingClientRect();
+
+      navIndicator.style.width = rect.width - 28 + "px";
+      navIndicator.style.left = rect.left - parentRect.left + 14 + "px";
+      navIndicator.style.opacity = "1";
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener("click", function (e) {
+        navLinks.forEach(item => item.classList.remove("active"));
+        this.classList.add("active");
+        moveIndicator(this);
+      });
+    });
+
+    window.addEventListener("load", () => {
+      const activeLink = document.querySelector(".nav-link.active");
+      if (activeLink) moveIndicator(activeLink);
+    });
+
+    window.addEventListener("resize", () => {
+      const activeLink = document.querySelector(".nav-link.active");
+      if (activeLink) moveIndicator(activeLink);
+    });
+
+    // toggle password
+    const togglePassword = document.getElementById("togglePassword");
+    togglePassword.addEventListener("click", function () {
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+    });
+  </script>
+</body>
+</html>

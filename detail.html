@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JIKN - Detail Arsip</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #f5f5f5;
+      overflow-x: hidden;
+    }
+
+    .nav-pill {
+      border-radius: 999px;
+    }
+
+    .nav-menu {
+      position: relative;
+    }
+
+    .nav-indicator {
+      position: absolute;
+      bottom: 10px;
+      height: 3px;
+      border-radius: 999px;
+      background: white;
+      transition: all 0.35s cubic-bezier(.4,0,.2,1);
+      left: 0;
+      width: 0;
+      opacity: 0;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color .25s ease;
+    }
+
+    .nav-link:hover {
+      color: #ffffff;
+    }
+
+    .nav-link.active {
+      font-weight: 500;
+    }
+
+    .lang-select:focus {
+      outline: none;
+    }
+
+    .dropdown-enter {
+      opacity: 0;
+      transform: translateY(8px) scale(.98);
+      pointer-events: none;
+    }
+
+    .dropdown-open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .dropdown-panel {
+      transition: all .22s ease;
+      transform-origin: top right;
+    }
+
+    .detail-page-bg {
+      background: #dfe3ee;
+    }
+
+    .meta-top-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #8890a2;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+
+    .meta-top-line svg {
+      flex-shrink: 0;
+    }
+
+    .viewer-box {
+      background: #ffffff;
+      border-radius: 10px;
+      min-height: 110px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.03);
+    }
+
+    .left-card {
+      background: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+
+    .clip-btn {
+      height: 30px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: .2s ease;
+    }
+
+    .clip-btn.primary {
+      background: #10266f;
+      color: white;
+    }
+
+    .clip-btn.primary:hover {
+      background: #0d215e;
+    }
+
+    .clip-btn.secondary {
+      background: #ffffff;
+      color: #243b7a;
+      border: 1px solid #d3dbef;
+    }
+
+    .clip-btn.secondary:hover {
+      background: #eef3ff;
+    }
+
+    .institution-card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 14px 14px 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+
+    .related-item {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid #d8dcea;
+    }
+
+    .related-item:last-child {
+      border-bottom: none;
+    }
+
+    .related-thumb {
+      width: 64px;
+      height: 48px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #ccc;
+    }
+
+    .related-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .detail-table-section {
+      margin-bottom: 10px;
+    }
+
+    .detail-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #162a70;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .detail-section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #9199af;
+    }
+
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .detail-table tr {
+      border-bottom: 1px solid #c8cfdf;
+    }
+
+    .detail-table td {
+      font-size: 12px;
+      line-height: 1.45;
+      padding: 2px 0;
+      vertical-align: top;
+      color: #4c5876;
+    }
+
+    .detail-table td:first-child {
+      width: 34%;
+      color: #4b556f;
+      padding-right: 16px;
+    }
+
+    .detail-table td:last-child {
+      color: #425171;
+    }
+
+    .small-caption {
+      font-size: 9px;
+      color: #72798c;
+      text-align: center;
+      margin-top: 5px;
+      line-height: 1.2;
+    }
+
+    .archive-tree {
+  width: 100%;
+}
+
+.tree-node {
+  display: block;
+}
+
+.tree-row,
+.tree-file-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  color: #66718a;
+}
+
+.tree-row {
+  margin-bottom: 3px;
+}
+
+.tree-file-row {
+  margin-bottom: 4px;
+}
+
+.tree-children {
+  margin-left: 18px;
+  padding-left: 16px;
+  display: none;
+}
+
+.tree-node.open > .tree-children {
+  display: block;
+}
+
+.tree-toggle {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #687395;
+  color: #687395;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.tree-toggle:hover {
+  background: #f4f6fb;
+}
+
+.tree-folder-icon,
+.tree-file-icon {
+  width: 15px;
+  height: 15px;
+  color: #687395;
+  flex-shrink: 0;
+}
+
+.tree-label {
+  font-size: 10px;
+  line-height: 1.4;
+  color: #6a7288;
+}
+  </style>
+</head>
+<body class="text-[#1f1f1f]">
+
+  <div class="w-full min-h-screen bg-white">
+    <!-- TOP BAR -->
+    <header class="w-full bg-white border-b border-gray-200">
+      <div class="w-full px-6 xl:px-10 py-3">
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3 min-w-0">
+            <img
+              src="assets/logo.png"
+              alt="Logo JIKN"
+              class="w-12 h-12 object-contain shrink-0"
+            />
+            <div
+              id="siteTitle"
+              class="text-[20px] xl:text-[22px] font-semibold text-[#21407c] leading-tight"
+              data-id="siteTitle"
+            >
+              Jaringan Informasi Kearsipan Nasional
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 shrink-0">
+            <select
+              id="languageSwitcher"
+              class="lang-select text-[12px] border border-gray-300 rounded px-3 py-1.5 text-gray-600 bg-white"
+            >
+              <option value="id">Indonesia</option>
+              <option value="en">English</option>
+            </select>
+
+            <a
+              href="#"
+              id="aboutText"
+              class="text-[12px] text-gray-600 hover:text-gray-800"
+              data-id="about"
+            >
+              Tentang Kami
+            </a>
+
+            <div class="relative">
+              <button
+                id="userMenuButton"
+                type="button"
+                class="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.125a7.5 7.5 0 0115 0" />
+                </svg>
+              </button>
+
+              <div
+                id="userDropdown"
+                class="dropdown-panel dropdown-enter absolute right-0 top-12 w-44 bg-white border border-gray-200 rounded-xl shadow-lg p-2 z-50"
+              >
+                <a
+                  href="login.html"
+                  class="block px-4 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-100"
+                  id="loginMenuText"
+                  data-id="login"
+                >
+                  Login
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NAV -->
+        <div class="mt-3">
+          <nav class="bg-[#0d215e] nav-pill overflow-hidden px-3">
+            <div class="nav-menu">
+              <ul id="navList" class="flex items-center text-white text-[14px] relative">
+                <li>
+                  <a href="index.html" class="nav-link block px-8 py-4" data-id="navHome">Beranda</a>
+                </li>
+                <li>
+                  <a href="deskripsi.html" class="nav-link active block px-8 py-4" data-id="navDesc">Deskripsi Arsip</a>
+                </li>
+                <li>
+                  <a href="#" class="nav-link block px-8 py-4" data-id="navVirtual">Pameran Virtual</a>
+                </li>
+                <li>
+                  <a href="#" class="nav-link block px-8 py-4" data-id="navAccess">Layanan Akses</a>
+                </li>
+                <li>
+                  <a href="#" class="nav-link block px-8 py-4" data-id="navFaq">FAQ</a>
+                </li>
+              </ul>
+              <span id="navIndicator" class="nav-indicator"></span>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- DETAIL CONTENT -->
+    <section class="detail-page-bg min-h-[calc(100vh-108px)] px-5 xl:px-6 pt-4 pb-8">
+      <div class="max-w-[1360px] mx-auto">
+        <!-- breadcrumb -->
+        <div class="text-[10px] text-[#59627a] mb-4">
+          <a href="index.html" data-id="navHome">Beranda</a>
+          <span class="mx-1">&gt;</span>
+          <a href="deskripsi.html" data-id="navDesc">Deskripsi Arsip</a>
+          <span class="mx-1">&gt;</span>
+          <span data-id="detailBread">Detail Arsip</span>
+        </div>
+
+        <!-- title -->
+        <h1
+          class="text-[24px] leading-[1.25] font-semibold text-[#1b2e72] mb-3"
+          data-id="detailTitle"
+        >
+          Tugu Pahlawan menjulang angkasa jantung hati arek Surabaya
+        </h1>
+
+        <!-- meta top -->
+        <div class="flex flex-wrap items-center gap-5 mb-5">
+          <div class="meta-top-line">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-[12px] h-[12px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/>
+            </svg>
+            <span>30 Aug 2003 - 30 Aug 2003</span>
+          </div>
+
+          <div class="meta-top-line">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-[12px] h-[12px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0c2.5 0 4-4 4-9s-1.5-9-4-9-4 4-4 9 1.5 9 4 9Zm-9-9h18"/>
+            </svg>
+            <span data-id="topCreator">Dinas Perpustakaan dan Kearsipan Kota Surabaya</span>
+          </div>
+        </div>
+
+<!-- preview box -->
+<div class="viewer-box mb-6 p-5">
+    <div class="archive-tree text-[10px] text-[#6b7386]">
+      <!-- level 1 -->
+      <div class="tree-node">
+        <div class="tree-row">
+          <button type="button" class="tree-toggle" aria-label="Toggle folder">+</button>
+  
+          <svg xmlns="http://www.w3.org/2000/svg" class="tree-folder-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/>
+          </svg>
+  
+          <span class="tree-label">[Fonds] Buku Kenang-Kenangan 5 Tahun Kota Besar Surabaya Tahun 1950-1956</span>
+        </div>
+  
+        <div class="tree-children">
+          <!-- level 2 -->
+          <div class="tree-node">
+            <div class="tree-row">
+              <button type="button" class="tree-toggle" aria-label="Toggle folder">+</button>
+  
+              <svg xmlns="http://www.w3.org/2000/svg" class="tree-folder-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/>
+              </svg>
+  
+              <span class="tree-label">[Fonds] Buku Kenang-Kenangan 5 Tahun Kota Besar Surabaya Tahun 1950-1956</span>
+            </div>
+  
+            <div class="tree-children">
+              <!-- level 3 -->
+              <div class="tree-node">
+                <div class="tree-row">
+                  <button type="button" class="tree-toggle" aria-label="Toggle folder">+</button>
+  
+                  <svg xmlns="http://www.w3.org/2000/svg" class="tree-folder-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/>
+                  </svg>
+  
+                  <span class="tree-label">[Fonds] Buku Kenang-Kenangan 5 Tahun Kota Besar Surabaya Tahun 1950-1956</span>
+                </div>
+  
+                <div class="tree-children">
+                  <!-- level 4 -->
+                  <div class="tree-node">
+                    <div class="tree-row">
+                      <button type="button" class="tree-toggle" aria-label="Toggle folder">+</button>
+  
+                      <svg xmlns="http://www.w3.org/2000/svg" class="tree-folder-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/>
+                      </svg>
+  
+                      <span class="tree-label">[Fonds] Buku Kenang-Kenangan 5 Tahun Kota Besar Surabaya Tahun 1950-1956</span>
+                    </div>
+  
+                    <div class="tree-children">
+                      <div class="tree-file-row">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="tree-file-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 3v5h5"/>
+                        </svg>
+                        <span class="tree-label">Sub file 01</span>
+                      </div>
+  
+                      <div class="tree-file-row">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="tree-file-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 3v5h5"/>
+                        </svg>
+                        <span class="tree-label">Sub file 02</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+        <!-- main detail layout -->
+        <div class="grid grid-cols-[290px_1fr] gap-5 items-start">
+          <!-- LEFT -->
+          <div>
+            <div class="left-card p-0 mb-3">
+              <div class="p-3">
+                <img
+                  src="assets/tugu.jpeg"
+                  alt="Detail utama"
+                  class="w-full h-[170px] object-cover rounded-[8px] grayscale"
+                />
+                <div class="small-caption" data-id="imageCaption">
+                  Tugu Pahlawan menjulang angkasa<br />
+                  jantung hati arek Surabaya.
+                </div>
+              </div>
+
+              <div class="px-3 pb-3">
+                <div class="w-[48px] h-[32px] rounded-[6px] overflow-hidden bg-[#cfcfcf] mb-1">
+                  <img src="assets/tugu.jpeg" alt="Thumbnail" class="w-full h-full object-cover grayscale" />
+                </div>
+                <div class="text-[10px] text-right text-[#6f7689]" data-id="thumbCount">Hasil 1-1 dari 1</div>
+              </div>
+            </div>
+
+            <div class="space-y-2 mb-4">
+              <a href="#" class="clip-btn primary" data-id="requestAccess">Permintaan Akses Arsip Ini</a>
+              <a href="#" class="clip-btn secondary" data-id="clipboardBtn">Tambahkan ke Clipboard</a>
+            </div>
+
+            <div class="institution-card mb-4">
+              <div class="flex items-start gap-3">
+                <img src="assets/sby.png" alt="Instansi" class="w-[72px] h-[72px] object-contain shrink-0" />
+                <div>
+                  <div class="text-[11px] leading-[1.35] font-semibold text-[#17316f]" data-id="institutionName">
+                    Dinas Perpustakaan dan Kearsipan Kota Surabaya
+                  </div>
+
+                  <div class="grid grid-cols-[74px_1fr] gap-x-2 mt-2 text-[10px] leading-[1.5]">
+                    <div class="font-semibold text-[#44506d]" data-id="institutionCodeLabel">Kode Instansi</div>
+                    <div class="text-[#5f6880]">23578-6</div>
+
+                    <div class="font-semibold text-[#44506d]" data-id="institutionTypeLabel">Jenis Instansi</div>
+                    <div class="text-[#5f6880]" data-id="institutionType">Pemerintah Kota</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-[14px] font-semibold text-[#1b2e72] mb-2" data-id="relatedTitle">Arsip Terkait</h3>
+
+              <div class="space-y-0">
+                <div class="related-item">
+                  <div class="related-thumb">
+                    <img src="assets/deskripsi3.png" alt="Related 1" />
+                  </div>
+                  <div>
+                    <div class="text-[10px] font-semibold text-[#17316f] leading-[1.35]" data-id="relatedItemTitle">
+                      Upacara 17 Agustus di Tugu Pahlawan
+                    </div>
+                    <div class="text-[9px] text-[#6b7285] mt-1">Dinas Perpustakaan dan Kearsipan Provinsi Jawa Timur</div>
+                    <div class="text-[9px] text-[#6b7285]">17 Aug 1987 - 17 Aug 1987</div>
+                  </div>
+                </div>
+
+                <div class="related-item">
+                  <div class="related-thumb">
+                    <img src="assets/deskripsi3.png" alt="Related 2" />
+                  </div>
+                  <div>
+                    <div class="text-[10px] font-semibold text-[#17316f] leading-[1.35]">Upacara 17 Agustus di Tugu Pahlawan</div>
+                    <div class="text-[9px] text-[#6b7285] mt-1">Dinas Perpustakaan dan Kearsipan Provinsi Jawa Timur</div>
+                    <div class="text-[9px] text-[#6b7285]">17 Aug 1987 - 17 Aug 1987</div>
+                  </div>
+                </div>
+
+                <div class="related-item">
+                  <div class="related-thumb">
+                    <img src="assets/deskripsi3.png" alt="Related 3" />
+                  </div>
+                  <div>
+                    <div class="text-[10px] font-semibold text-[#17316f] leading-[1.35]">Upacara 17 Agustus di Tugu Pahlawan</div>
+                    <div class="text-[9px] text-[#6b7285] mt-1">Dinas Perpustakaan dan Kearsipan Provinsi Jawa Timur</div>
+                    <div class="text-[9px] text-[#6b7285]">17 Aug 1987 - 17 Aug 1987</div>
+                  </div>
+                </div>
+
+                <div class="related-item">
+                  <div class="related-thumb">
+                    <img src="assets/deskripsi3.png" alt="Related 4" />
+                  </div>
+                  <div>
+                    <div class="text-[10px] font-semibold text-[#17316f] leading-[1.35]">Upacara 17 Agustus di Tugu Pahlawan</div>
+                    <div class="text-[9px] text-[#6b7285] mt-1">Dinas Perpustakaan dan Kearsipan Provinsi Jawa Timur</div>
+                    <div class="text-[9px] text-[#6b7285]">17 Aug 1987 - 17 Aug 1987</div>
+                  </div>
+                </div>
+
+                <div class="related-item">
+                  <div class="related-thumb">
+                    <img src="assets/deskripsi3.png" alt="Related 5" />
+                  </div>
+                  <div>
+                    <div class="text-[10px] font-semibold text-[#17316f] leading-[1.35]">Upacara 17 Agustus di Tugu Pahlawan</div>
+                    <div class="text-[9px] text-[#6b7285] mt-1">Dinas Perpustakaan dan Kearsipan Provinsi Jawa Timur</div>
+                    <div class="text-[9px] text-[#6b7285]">17 Aug 1987 - 17 Aug 1987</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div>
+            <div class="detail-table-section">
+              <div class="detail-section-title" data-id="identitySection">Bagian Identitas</div>
+              <table class="detail-table">
+                <tr><td data-id="labelReferenceCode">Kode Referensi</td><td>12.131.2.121-040.6.4.1</td></tr>
+                <tr><td data-id="labelUniqueCode">Kode Unik</td><td>12-400.6.41</td></tr>
+                <tr><td data-id="labelTitle">Judul</td><td data-id="detailTitleCell">Tugu Pahlawan menjulang angkasa jantung hati arek Surabaya</td></tr>
+                <tr><td data-id="labelDate">Tanggal</td><td>30 Aug 2003</td></tr>
+                <tr><td data-id="labelLevel">Tingkatan Deskripsi</td><td>Item</td></tr>
+                <tr><td data-id="labelMediaCount">Jumlah dan Media</td><td>1 file arsip media kertas</td></tr>
+              </table>
+            </div>
+
+            <div class="detail-table-section">
+              <div class="detail-section-title" data-id="contextSection">Bagian Konteks</div>
+              <table class="detail-table">
+                <tr><td data-id="labelCreator">Nama Pencipta</td><td>Pemerintah Kota Surabaya</td></tr>
+                <tr><td data-id="labelManager">Nama Pengelola</td><td>Dinas Perpustakaan dan Kearsipan Kota Surabaya</td></tr>
+                <tr><td data-id="labelHistory">Riwayat Kearsipan</td><td>-</td></tr>
+                <tr><td data-id="labelSource">Sumber Akuisisi atau Penyerahan Langsung</td><td>-</td></tr>
+              </table>
+            </div>
+
+            <div class="detail-table-section">
+              <div class="detail-section-title" data-id="structureSection">Bagian Isi dan Struktur</div>
+              <table class="detail-table">
+                <tr><td data-id="labelScope">Cakupan dan Isi</td><td>-</td></tr>
+                <tr><td data-id="labelRetention">Penilaian, Pemusnahan dan Jadwal Retensi Arsip</td><td>-</td></tr>
+                <tr><td data-id="labelAccrual">Akrual</td><td>-</td></tr>
+                <tr><td data-id="labelSystem">Sistem Penataan</td><td>-</td></tr>
+              </table>
+            </div>
+
+            <div class="detail-table-section">
+              <div class="detail-section-title" data-id="accessSection">Bagian Ketentuan Akses dan Pengguna</div>
+              <table class="detail-table">
+                <tr><td data-id="labelAccessRule">Ketentuan dan Akses</td><td data-id="openArchive">Arsip terbuka</td></tr>
+                <tr><td data-id="labelReproduction">Ketentuan Reproduksi</td><td>-</td></tr>
+                <tr><td data-id="labelLanguageMaterial">Bahasa-bahan Arsip</td><td>Bahasa Indonesia</td></tr>
+                <tr><td data-id="labelTool">Sarana Temu Balik</td><td>Inventaris arsip buku kenangan KBS</td></tr>
+              </table>
+            </div>
+
+            <div class="detail-table-section">
+              <div class="detail-section-title" data-id="relatedMaterialSection">Bagian Bahan-bahan Terkait</div>
+              <table class="detail-table">
+                <tr><td data-id="labelOriginal">Keberadaan dan Lokasi Arsip Asli</td><td>-</td></tr>
+                <tr><td data-id="labelCopy">Keberadaan dan Lokasi Arsip Kopi</td><td>-</td></tr>
+              </table>
+            </div>
+
+            <div class="detail-table-section">
+              <div class="detail-section-title" data-id="controlSection">Bagian Kontrol Deskripsi</div>
+              <table class="detail-table">
+                <tr><td data-id="labelDescCode">Kode Unik Deskripsi</td><td>-</td></tr>
+                <tr><td data-id="labelRevisionRule">Ketentuan Tanggal Penciptaan Revisi</td><td>-</td></tr>
+                <tr><td data-id="labelLanguageTool">Sarana Temu Balik</td><td>Indonesia</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const translations = {
+      id: {
+        htmlLang: "id",
+        siteTitle: "Jaringan Informasi Kearsipan Nasional",
+        about: "Tentang Kami",
+        login: "Login",
+        navHome: "Beranda",
+        navDesc: "Deskripsi Arsip",
+        navVirtual: "Pameran Virtual",
+        navAccess: "Layanan Akses",
+        navFaq: "FAQ",
+        detailBread: "Detail Arsip",
+        detailTitle: "Tugu Pahlawan menjulang angkasa jantung hati arek Surabaya",
+        topCreator: "Dinas Perpustakaan dan Kearsipan Kota Surabaya",
+        viewerText: "Pondok atau kantor anggana II baru kota besar Surabaya tahun 1955-1956",
+        imageCaption: "Tugu Pahlawan menjulang angkasa<br>jantung hati arek Surabaya.",
+        thumbCount: "Hasil 1-1 dari 1",
+        requestAccess: "Permintaan Akses Arsip Ini",
+        clipboardBtn: "Tambahkan ke Clipboard",
+        institutionName: "Dinas Perpustakaan dan Kearsipan Kota Surabaya",
+        institutionCodeLabel: "Kode Instansi",
+        institutionTypeLabel: "Jenis Instansi",
+        institutionType: "Pemerintah Kota",
+        relatedTitle: "Arsip Terkait",
+        relatedItemTitle: "Upacara 17 Agustus di Tugu Pahlawan",
+        identitySection: "Bagian Identitas",
+        contextSection: "Bagian Konteks",
+        structureSection: "Bagian Isi dan Struktur",
+        accessSection: "Bagian Ketentuan Akses dan Pengguna",
+        relatedMaterialSection: "Bagian Bahan-bahan Terkait",
+        controlSection: "Bagian Kontrol Deskripsi",
+        labelReferenceCode: "Kode Referensi",
+        labelUniqueCode: "Kode Unik",
+        labelTitle: "Judul",
+        labelDate: "Tanggal",
+        labelLevel: "Tingkatan Deskripsi",
+        labelMediaCount: "Jumlah dan Media",
+        labelCreator: "Nama Pencipta",
+        labelManager: "Nama Pengelola",
+        labelHistory: "Riwayat Kearsipan",
+        labelSource: "Sumber Akuisisi atau Penyerahan Langsung",
+        labelScope: "Cakupan dan Isi",
+        labelRetention: "Penilaian, Pemusnahan dan Jadwal Retensi Arsip",
+        labelAccrual: "Akrual",
+        labelSystem: "Sistem Penataan",
+        labelAccessRule: "Ketentuan dan Akses",
+        labelReproduction: "Ketentuan Reproduksi",
+        labelLanguageMaterial: "Bahasa-bahan Arsip",
+        labelTool: "Sarana Temu Balik",
+        labelOriginal: "Keberadaan dan Lokasi Arsip Asli",
+        labelCopy: "Keberadaan dan Lokasi Arsip Kopi",
+        labelDescCode: "Kode Unik Deskripsi",
+        labelRevisionRule: "Ketentuan Tanggal Penciptaan Revisi",
+        labelLanguageTool: "Sarana Temu Balik",
+        openArchive: "Arsip terbuka",
+        detailTitleCell: "Tugu Pahlawan menjulang angkasa jantung hati arek Surabaya"
+      },
+      en: {
+        htmlLang: "en",
+        siteTitle: "National Archival Information Network",
+        about: "About Us",
+        login: "Login",
+        navHome: "Home",
+        navDesc: "Archive Description",
+        navVirtual: "Virtual Exhibition",
+        navAccess: "Access Services",
+        navFaq: "FAQ",
+        detailBread: "Archive Detail",
+        detailTitle: "Heroes Monument rises high in the heart of Surabaya youth",
+        topCreator: "Surabaya City Library and Archives Office",
+        viewerText: "Pondok or office building II in the new central city of Surabaya, 1955-1956",
+        imageCaption: "Heroes Monument rises high<br>in the heart of Surabaya youth.",
+        thumbCount: "Result 1-1 of 1",
+        requestAccess: "Request Access to This Archive",
+        clipboardBtn: "Add to Clipboard",
+        institutionName: "Surabaya City Library and Archives Office",
+        institutionCodeLabel: "Institution Code",
+        institutionTypeLabel: "Institution Type",
+        institutionType: "City Government",
+        relatedTitle: "Related Archives",
+        relatedItemTitle: "August 17 Ceremony at Heroes Monument",
+        identitySection: "Identity Section",
+        contextSection: "Context Section",
+        structureSection: "Content and Structure Section",
+        accessSection: "Access and Use Conditions Section",
+        relatedMaterialSection: "Related Materials Section",
+        controlSection: "Description Control Section",
+        labelReferenceCode: "Reference Code",
+        labelUniqueCode: "Unique Code",
+        labelTitle: "Title",
+        labelDate: "Date",
+        labelLevel: "Level of Description",
+        labelMediaCount: "Extent and Medium",
+        labelCreator: "Creator Name",
+        labelManager: "Custodian Name",
+        labelHistory: "Archival History",
+        labelSource: "Immediate Source of Acquisition or Transfer",
+        labelScope: "Scope and Content",
+        labelRetention: "Appraisal, Destruction and Retention Schedule",
+        labelAccrual: "Accruals",
+        labelSystem: "System of Arrangement",
+        labelAccessRule: "Conditions Governing Access",
+        labelReproduction: "Conditions Governing Reproduction",
+        labelLanguageMaterial: "Language of Material",
+        labelTool: "Finding Aids",
+        labelOriginal: "Existence and Location of Originals",
+        labelCopy: "Existence and Location of Copies",
+        labelDescCode: "Description Unique Code",
+        labelRevisionRule: "Date of Creation and Revision Rules",
+        labelLanguageTool: "Finding Aids Language",
+        openArchive: "Open archive",
+        detailTitleCell: "Heroes Monument rises high in the heart of Surabaya youth"
+      }
+    };
+
+    const languageSwitcher = document.getElementById("languageSwitcher");
+
+    function setLanguage(lang) {
+      const t = translations[lang];
+      document.documentElement.lang = t.htmlLang;
+
+      document.querySelectorAll("[data-id]").forEach(el => {
+        const key = el.getAttribute("data-id");
+        if (!t[key]) return;
+
+        if (key === "imageCaption") {
+          el.innerHTML = t[key];
+        } else {
+          el.textContent = t[key];
+        }
+      });
+    }
+
+    languageSwitcher.addEventListener("change", function () {
+      setLanguage(this.value);
+    });
+
+    setLanguage("id");
+
+    const userMenuButton = document.getElementById("userMenuButton");
+    const userDropdown = document.getElementById("userDropdown");
+
+    function toggleDropdown() {
+      const isOpen = userDropdown.classList.contains("dropdown-open");
+
+      if (isOpen) {
+        userDropdown.classList.remove("dropdown-open");
+        userDropdown.classList.add("dropdown-enter");
+      } else {
+        userDropdown.classList.remove("dropdown-enter");
+        userDropdown.classList.add("dropdown-open");
+      }
+    }
+
+    userMenuButton.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!userDropdown.contains(e.target) && !userMenuButton.contains(e.target)) {
+        userDropdown.classList.remove("dropdown-open");
+        userDropdown.classList.add("dropdown-enter");
+      }
+    });
+
+    const navLinks = document.querySelectorAll(".nav-link");
+    const navIndicator = document.getElementById("navIndicator");
+
+    function moveIndicator(target) {
+      const parentRect = target.closest(".nav-menu").getBoundingClientRect();
+      const rect = target.getBoundingClientRect();
+
+      navIndicator.style.width = rect.width - 28 + "px";
+      navIndicator.style.left = rect.left - parentRect.left + 14 + "px";
+      navIndicator.style.opacity = "1";
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener("click", function (e) {
+        if (this.getAttribute("href") === "#") {
+          e.preventDefault();
+        }
+        navLinks.forEach(item => item.classList.remove("active"));
+        this.classList.add("active");
+        moveIndicator(this);
+      });
+    });
+
+    window.addEventListener("load", () => {
+      const activeLink = document.querySelector(".nav-link.active");
+      if (activeLink) moveIndicator(activeLink);
+    });
+
+    window.addEventListener("resize", () => {
+      const activeLink = document.querySelector(".nav-link.active");
+      if (activeLink) moveIndicator(activeLink);
+    });
+  </script>
+
+<script>
+    const treeToggles = document.querySelectorAll(".tree-toggle");
+  
+    treeToggles.forEach(toggle => {
+      toggle.addEventListener("click", function () {
+        const node = this.closest(".tree-node");
+        const isOpen = node.classList.toggle("open");
+  
+        this.textContent = isOpen ? "-" : "+";
+      });
+    });
+  </script>
+</body>
+</html>
